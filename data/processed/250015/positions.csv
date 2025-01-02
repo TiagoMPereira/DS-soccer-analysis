@@ -1,0 +1,13 @@
+job_title,position,x,y,depth,width
+Goalkeeper,GK,3,1,Goalkeeper,Goalkeeper
+Center back,CB,3,2,Defensive,Center
+Right back,RB,5,2,Defensive,Right
+Left back,LB,1,2,Defensive,Left
+Central defensive midfielder,CDM,3,3,Mid-defensive,Center
+Center midfield,CM,3,4,Middle,Center
+Right midfield,RM,5,4,Middle,Right
+Left midfield,LM,1,4,Middle,Left
+Central attacking midfielder,CAM,3,5,Mid-attacking,Center
+Right winger,RW,5,6,Attacking,Right
+Left winger,LW,1,6,Attacking,Left
+Striker,ST,3,7,Attacking,Center
