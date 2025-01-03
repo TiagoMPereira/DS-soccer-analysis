@@ -1,0 +1,9 @@
+name: "Meu Site"
+navbar:
+  title: "Meu Site"
+  left:
+    - text: "Página 1"
+      href: eda1.html
+    - text: "Página 2"
+      href: eda2.html
+output_dir: "_site"
