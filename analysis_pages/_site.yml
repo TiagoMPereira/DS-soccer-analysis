@@ -6,4 +6,4 @@ navbar:
       href: eda1.html
     - text: "Página 2"
       href: eda2.html
-output_dir: "_site"
+output_dir: "site"
