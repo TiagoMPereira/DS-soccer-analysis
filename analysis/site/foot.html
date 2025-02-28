@@ -11,9 +11,9 @@
 
 <meta name="author" content="Tiago" />
 
-<meta name="date" content="2025-01-03" />
+<meta name="date" content="2025-01-05" />
 
-<title>EDA2</title>
+<title>Foot</title>
 
 <script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -240,15 +240,15 @@ $(document).ready(function () {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">Meu Site</a>
+      <a class="navbar-brand" href="index.html">Soccer Analysis</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="eda1.html">Página 1</a>
+  <a href="leagues.html">Leagues</a>
 </li>
 <li>
-  <a href="eda2.html">Página 2</a>
+  <a href="foot.html">Preferred Foot</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -262,39 +262,153 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">EDA2</h1>
+<h1 class="title toc-ignore">Foot</h1>
 <h4 class="author">Tiago</h4>
-<h4 class="date">2025-01-03</h4>
+<h4 class="date">2025-01-05</h4>
 
 </div>
 
 
-<div id="r-markdown-2" class="section level2">
-<h2>R Markdown 2</h2>
-<p>This is an R Markdown document. Markdown is a simple formatting
-syntax for authoring HTML, PDF, and MS Word documents. For more details
-on using R Markdown see <a href="http://rmarkdown.rstudio.com"
-class="uri">http://rmarkdown.rstudio.com</a>.</p>
-<p>When you click the <strong>Knit</strong> button a document will be
-generated that includes both content as well as the output of any
-embedded R code chunks within the document. You can embed an R code
-chunk like this:</p>
-<pre class="r"><code>summary(cars)</code></pre>
-<pre><code>##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00</code></pre>
+<div id="players-preferred-foot" class="section level2">
+<h2>Players preferred foot</h2>
+<p>This section aims to explore the presence of right-footed and
+left-footed in each field position.<br />
+In the dataset each player have their <code>preferred_foot</code> and
+there is no player two-footed.</p>
+<div id="right-footed" class="section level3">
+<h3>Right-footed</h3>
+<table>
+<colgroup>
+<col width="36%" />
+<col width="19%" />
+<col width="29%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Player</th>
+<th align="left">Team</th>
+<th align="left">Position</th>
+<th align="left">Preferred foot</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Rodrigo Hernández Cascante</td>
+<td align="left">Manchester City</td>
+<td align="left">Central defensive midfielder</td>
+<td align="left">Right</td>
+</tr>
+<tr class="even">
+<td align="left">Kevin De Bruyne</td>
+<td align="left">Manchester City</td>
+<td align="left">Center midfield</td>
+<td align="left">Right</td>
+</tr>
+<tr class="odd">
+<td align="left">Jude Bellingham</td>
+<td align="left">Real Madrid</td>
+<td align="left">Central attacking midfielder</td>
+<td align="left">Right</td>
+</tr>
+<tr class="even">
+<td align="left">Kylian Mbappé</td>
+<td align="left">Real Madrid</td>
+<td align="left">Striker</td>
+<td align="left">Right</td>
+</tr>
+<tr class="odd">
+<td align="left">Vinícius José de Oliveira Júnior</td>
+<td align="left">Real Madrid</td>
+<td align="left">Left winger</td>
+<td align="left">Right</td>
+</tr>
+<tr class="even">
+<td align="left">Harry Kane</td>
+<td align="left">FC Bayern München</td>
+<td align="left">Striker</td>
+<td align="left">Right</td>
+</tr>
+</tbody>
+</table>
+<pre><code>## [1] &quot;Total: 4146&quot;</code></pre>
 </div>
-<div id="including-plots" class="section level2">
-<h2>Including Plots</h2>
-<p>You can also embed plots, for example:</p>
-<p><img src="eda2_files/figure-html/pressure2-1.png" width="672" /></p>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the
-code chunk to prevent printing of the R code that generated the
-plot.</p>
+<div id="left-footed" class="section level3">
+<h3>Left-footed</h3>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Player</th>
+<th align="left">Team</th>
+<th align="left">Position</th>
+<th align="left">Preferred foot</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Erling Haaland</td>
+<td align="left">Manchester City</td>
+<td align="left">Striker</td>
+<td align="left">Left</td>
+</tr>
+<tr class="even">
+<td align="left">Mohamed Salah</td>
+<td align="left">Liverpool</td>
+<td align="left">Right midfield</td>
+<td align="left">Left</td>
+</tr>
+<tr class="odd">
+<td align="left">Martin Ødegaard</td>
+<td align="left">Arsenal</td>
+<td align="left">Center midfield</td>
+<td align="left">Left</td>
+</tr>
+<tr class="even">
+<td align="left">Thibaut Courtois</td>
+<td align="left">Real Madrid</td>
+<td align="left">Goalkeeper</td>
+<td align="left">Left</td>
+</tr>
+<tr class="odd">
+<td align="left">Bukayo Saka</td>
+<td align="left">Arsenal</td>
+<td align="left">Right winger</td>
+<td align="left">Left</td>
+</tr>
+<tr class="even">
+<td align="left">Antoine Griezmann</td>
+<td align="left">Atlético Madrid</td>
+<td align="left">Striker</td>
+<td align="left">Left</td>
+</tr>
+</tbody>
+</table>
+<pre><code>## [1] &quot;Total: 1461&quot;</code></pre>
+</div>
+</div>
+<div id="positions-preferred-foot-distribution" class="section level2">
+<h2>Positions preferred foot distribution</h2>
+<p><img src="foot_files/figure-html/plot_foot-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>It is notable that most players are right-footed, hence the high
+prevalence of right-footed players in all positions. However, some
+behaviors stand out when analyzing the image above: The defensive
+players who play on the wings have as their predominant foot the one
+that reflects the side they play on. Right backs are mostly right-footed
+and left backs are mostly left-footed. As the players on the wings have
+more offensive participation, their predominant foot tends to change,
+especially for those who play on the left side of the field, where left
+wingers and left midfielders are predominantly right-footed. On the
+right side, there is a similar number of right-footed and left-footed
+players, with a slight predominance of left-footed players as
+wingers.</p>
+<p>For defensive situations, the hypothesis raised is that the defensive
+wingers actually defend the wings of the field using their predominant
+foot to tackle attackers who seek deep plays. In offensive actions, the
+suspicion is that the defense players use deep plays as an attacking
+action and seek the cross, while for the midfielders and wingers the
+suspicion is that they use their dominant foot for finishing, taking the
+ball to the inside of the field. The proposed surveys are nothing more
+than suggestions and there is NO evidence to prove such behaviors.</p>
 </div>
 
 

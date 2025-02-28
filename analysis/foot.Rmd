@@ -1,0 +1,189 @@
+---
+title: "Foot"
+author: "Tiago"
+date: "2025-01-05"
+output: html_document
+---
+
+```{r setup_foot, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(ggimage)
+library(magick)
+library(cowplot)
+
+players <- read.csv("../data/processed/250015/players.csv")
+players$position_lineup <- factor(as.character(players$position_lineup),
+                                     levels=c('GK', 'RB', 'CB', 'LB', 'CDM', 'RM', 'CM', 'LM', 'CAM', 'RW', 'LW', 'ST'))
+
+```
+
+```{r prepare_foot_plots, include=FALSE}
+left_shoe <- magick::image_transparent(
+  magick::image_read("../data/images/left_shoe.png"),
+  color = "white"
+)
+right_shoe <- magick::image_transparent(
+  magick::image_read("../data/images/right_shoe.png"),
+  color = "white"
+)
+
+plot_foot <- function(dataset, left_foot_img, right_foot_img, title="", calc_porc=TRUE, note=""){
+  if (calc_porc==TRUE){
+    dataset$pct <- dataset$value / sum(dataset$value)
+  }
+  
+  left_pct = dataset$pct[dataset$foot == "left"]
+  left_pct_str = paste0(as.character(round(left_pct*100, 1)), "%")
+  right_pct = dataset$pct[dataset$foot == "right"]
+  right_pct_str = paste0(as.character(round(right_pct*100, 1)), "%")
+  
+  left_foot_img_alpha <- magick::image_fx(
+    left_foot_img,
+    expression = paste0(as.character(left_pct), "*a"),
+    channel = "alpha"
+  )
+  right_foot_img_alpha <- magick::image_fx(
+    right_foot_img,
+    expression = paste0(as.character(right_pct), "*a"),
+    channel = "alpha"
+  )
+  
+  fig <- ggplot(data.frame(x = 0:2, y = 0:2), aes(x, y)) +
+    draw_image(left_foot_img_alpha , x = -0.15, y = 0, scale = .7) +
+    draw_image(right_foot_img_alpha, x = 0.15, y = 0, scale = .7) +
+    geom_text(x=0.32, y=0.8, label=left_pct_str, size=3) +
+    geom_text(x=0.68, y=0.8, label=right_pct_str, size=3) +
+    geom_text(x=0.75, y=0.2, label=note, size=3) +
+    theme_void() +
+    theme(
+        panel.background = element_blank(),
+        plot.background = element_blank()
+    )
+  
+  return(fig)
+}
+
+plots <- list()
+
+positions <- unique(players$position_lineup)
+
+for (i in 1:length(positions)){
+  position_current <- positions[[i]]
+  
+  players_current <- players |> 
+    filter(position_lineup==position_current)
+  
+  players_foot <- players_current |> 
+    group_by(preferredfoot) |> 
+    summarise(value=n()) |> 
+    mutate(foot=tolower(preferredfoot), value=value) |> 
+    select(c(foot, value))
+  
+  fig <- plot_foot(players_foot, left_shoe, right_shoe, note=position_current)
+  plots[[i]] <- fig
+}
+names(plots) <- positions
+```
+
+```{r draw_soccer_field, include=FALSE}
+
+field_dimensions <- data.frame(
+  x = c(0.25, 0.25, 0.75, 0.75, 0.25, 0.25, 0.75, 0.75, 0.65, 0.65, 0.35, 0.35, 0.25, 0.25, 0.35, 0.35, 0.65, 0.65),
+  y = c(0, 1.45, 1.45, 0, 0, 0.735, 0.735, 0, 0, 0.29, 0.29, 0, 0, 1.45, 1.45, 1.16, 1.16, 1.45)
+)
+
+rect1 <- data.frame (xmin=0.25, xmax=0.75, ymin=0, ymax=1.45)
+
+# Creating the base soccer field
+base_plot <- ggplot() + 
+  geom_path(data = field_dimensions, aes(x = x, y = y), color = "#aaa", linewidth = 1) +
+  xlim(0, 1.5) +
+  ylim(0, 1.5) +
+  geom_rect(data=rect1, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="#04750d", alpha=0.1, inherit.aes = FALSE) +
+  theme(axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        line=element_blank(),
+        text=element_blank())
+```
+## Players preferred foot
+
+This section aims to explore the presence of right-footed and left-footed in each field position.  
+In the dataset each player have their `preferred_foot` and there is no player two-footed.
+
+```{r preferred_foot_examples, echo=FALSE}
+
+rightfoot <- players |> 
+  filter(preferredfoot=="Right") |> 
+  arrange(desc(overallrating)) |> 
+  select(c(player, team, job_title, preferredfoot))
+
+leftfoot <- players |> 
+  filter(preferredfoot=="Left") |> 
+  arrange(desc(overallrating)) |> 
+  select(c(player, team, job_title, preferredfoot))
+
+total_right <- nrow(rightfoot)
+total_left <- nrow(leftfoot)
+
+```
+
+### Right-footed
+
+```{r display_table_right, echo=FALSE}
+knitr::kable(head(rightfoot), col.names = c("Player", "Team", "Position", "Preferred foot"))
+print(paste("Total:", total_right))
+```
+
+### Left-footed
+
+```{r display_table_left, echo=FALSE}
+knitr::kable(head(leftfoot), col.names = c("Player", "Team", "Position", "Preferred foot"))
+print(paste("Total:", total_left))
+```
+
+## Positions preferred foot distribution
+```{r plot_foot, echo=FALSE, warning=FALSE, fig.align = "center", fig.width=10, fig.height=6}
+positions_coordinates <- data.frame(
+  GK = c(5, 0),
+  RB = c(9, 4),
+  CB = c(5, 4),
+  LB = c(1, 4),
+  CDM = c(5, 7),
+  RM = c(9, 10),
+  CM = c(5, 10),
+  LM = c(1, 10),
+  CAM = c(5, 13),
+  RW = c(9, 16),
+  LW = c(1, 16),
+  ST = c(5, 19)
+)
+rownames(positions_coordinates) <- c("x", "y")
+
+final_plot <- base_plot
+for (i in names(plots)) {
+  
+  pos_x <- (positions_coordinates[[i]][[1]]) / 25 + 0.2
+  pos_y <- positions_coordinates[[i]][[2]] / 15
+  
+  final_plot <- final_plot +
+    draw_plot(plots[[i]], x = pos_x, y = pos_y, 
+              width = 0.2, height = 0.2) 
+}
+
+final_plot <- final_plot +
+  theme_void() +
+  theme(
+    panel.background = element_blank(),
+    plot.background = element_blank()
+  )
+
+final_plot
+```
+
+It is notable that most players are right-footed, hence the high prevalence of right-footed players in all positions. However, some behaviors stand out when analyzing the image above: The defensive players who play on the wings have as their predominant foot the one that reflects the side they play on. Right backs are mostly right-footed and left backs are mostly left-footed. As the players on the wings have more offensive participation, their predominant foot tends to change, especially for those who play on the left side of the field, where left wingers and left midfielders are predominantly right-footed. On the right side, there is a similar number of right-footed and left-footed players, with a slight predominance of left-footed players as wingers.
+
+For defensive situations, the hypothesis raised is that the defensive wingers actually defend the wings of the field using their predominant foot to tackle attackers who seek deep plays. In offensive actions, the suspicion is that the defense players use deep plays as an attacking action and seek the cross, while for the midfielders and wingers the suspicion is that they use their dominant foot for finishing, taking the ball to the inside of the field.
+The proposed surveys are nothing more than suggestions and there is NO evidence to prove such behaviors.
+

@@ -1,0 +1,9 @@
+name: "Soccer Analysis"
+navbar:
+  title: "Soccer Analysis"
+  left:
+    - text: "Leagues"
+      href: leagues.html
+    - text: "Preferred Foot"
+      href: foot.html
+output_dir: "site"

@@ -1,0 +1,505 @@
+---
+title: "Leagues"
+author: "Tiago"
+date: "2025-01-05"
+output: html_document
+---
+
+```{r setup_leagues, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(reshape2)
+library(gt)
+
+players <- read.csv("../data/processed/250015/players.csv")
+
+leagues_colors <- c(
+  "ENG-Premier League" = "#ed6b6b",
+  "ESP-La Liga" = "#ede96b",
+  "ITA-Serie A" = "#6bedc8",
+  "GER-Bundesliga" = "#585957",
+  "FRA-Ligue 1" = "#6b94ed",
+  "USA-Major League Soccer" = "#6F6BED",
+  "POR-Primeira Liga" = "#5b824b",
+  "SAU-Pro League" = "#72ed6b",
+  "NED-Eredivisie" = "#ed9b6b",
+  "TUR-Süper Lig" = "#ed8789"
+)
+region_colors <- c(
+  "Europe" = "#F36262",
+  "South America" = "#E2F362",
+  "Africa" = "#62F3DD",
+  "Asia" = "#6297F3",
+  "North/Central America" = "#38563A",
+  "Oceania" = "#F362CA"
+)
+## Grouping players
+players_league <- players |> group_by(league)
+```
+
+
+
+
+
+
+
+## Players and teams distribution
+This section will present a quick overview about the number of players and teams for each league. There are 3 bar plots showing, respectively, the number of players/teams for each league and the average number of players per team for each league.
+
+```{r setup_players_teams_leagues, echo=FALSE, warning=FALSE, fig.align = "center"}
+
+players_teams_leagues <- players |>
+  dplyr::group_by(league) |>
+  summarise(`# Players` = n(), `# Teams` = n_distinct(team)) |> 
+  mutate(`Average players per team` = round(`# Players` / `# Teams`, 2)) |> 
+  arrange(`# Players`)
+
+players_teams_leagues$league <- factor(players_teams_leagues$league, levels= players_teams_leagues$league[order(players_teams_leagues$`# Players`)])
+
+players_teams_leagues_melt <- melt(
+  players_teams_leagues, id="league"
+)
+```
+
+
+
+### Players and teams informations for leagues
+```{r plot_teams_per_league, echo=FALSE, warning=FALSE, fig.align = "center"}
+players_teams_leagues_melt |>
+  ggplot(aes(x=league, y=value, fill=league)) +
+  geom_bar(stat="identity", alpha=0.7) +
+  facet_wrap(~variable, ncol=1, strip.position="left", scales="free_y") +
+  scale_fill_manual(values = leagues_colors) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(size=8, angle=30, hjust = 1)
+  ) +
+  labs(x="League", y=NULL) +
+  geom_text(aes(x=league, y=value*1.1, label=value), color="black", size=3)
+```
+
+**USA - Major League Soccer** has more players than any other league, but it is explained once this league has more teams.
+
+
+
+
+
+
+
+## Players' age
+
+### Players' current age
+```{r plot_players_age, echo=FALSE, warning=FALSE, fig.align = "center", fig.width=8, fig.height=5}
+players |> 
+  ggplot(aes(x=current_age, fill=league)) +
+  geom_histogram(alpha=0.7, binwidth = 1) +
+  theme(
+    legend.position="none",
+    panel.spacing = unit(0.2, "lines"),
+    strip.text.x = element_text(size = 7)
+  ) +
+  scale_fill_manual(values = leagues_colors) +
+  xlab("") +
+  ylab("Players current age") +
+  facet_wrap(~league, ncol=5)
+```
+
+According to the ages' distribution some leagues appear to be similar, such as **Primeira Liga (Portugal)** and **Eredivisie (Netherlands)** and **Premier League (England)** and **Bundesliga (Germany)**. To evaluate if the players in those leagues present the same ages' distribution, the pairwise Kolmogorov-Smirnov test will be applied.  
+*1 - The ages' distribution of no league is normal, according to KS-test*  
+*2 - The ages' distribution are statistically different, according to Kruskall Wallis test (p = 2.2e-16)*  
+
+<center> **p-value of paired KS-Test between the ages' distribution per league** </center>
+
+```{r plot_ages_comparison, echo=FALSE, warning=FALSE, message=FALSE, fig.align = "center"}
+alpha <- 0.05
+league_names <- unique(players$league)
+p_values <- matrix(NA, nrow = length(league_names), ncol=length(league_names))
+for(i in 1:length(league_names)){
+
+  ages_i <- players |> filter(league==league_names[i])
+  ages_i <- ages_i$current_age
+
+  for(j in i:length(league_names)){
+    
+    ages_j <- players |> filter(league==league_names[j])
+    ages_j <- ages_j$current_age
+    
+    ks_test <- ks.test(ages_i, ages_j)
+    p <- ks_test$p.value
+
+    p_values[j, i] <- p
+  }
+}
+p_values <- data.frame(p_values)
+colnames(p_values) <- league_names
+rownames(p_values) <- league_names
+
+p_values <- cbind(league=rownames(p_values), p_values)
+p_values <- melt(p_values, index="league") |> tidyr::drop_na(value)
+p_values$league <- factor(p_values$league, levels=league_names)
+p_values$variable <- factor(p_values$variable, levels=league_names)
+
+p_values |> 
+  ggplot(aes(x=league, y=variable, fill=value)) +
+  geom_tile(color = "black") +
+  scale_fill_gradient2(
+    low = "white",
+    mid = "white",
+    high = "red",
+    midpoint = alpha
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size=8, angle=30, hjust = 1)
+  ) +
+  labs(
+    title = NULL,
+    x = NULL,
+    y = NULL
+  ) +
+  geom_text(aes(label = round(value, 3)), color = "black", size = 3)
+```
+
+Considering $\alpha = 0.05$ it is possible to assert that **Bundesliga** and **Premier League** has players from the same age as well as **Saudi Pro League** and **Super Lig (Turkey)** and also **Serie A (Italy)** and **USA MLS**. The pairs with $p-value > 0.05$ have statistically the same players' ages distribution.
+
+
+
+
+
+
+
+## Player's nationality
+
+```{r prepare_nationality, echo=FALSE, warning=FALSE, message=FALSE}
+# install.packages("countrycode")
+library(countrycode)
+
+players$nationality.continent <- countrycode(
+  sourcevar = players[, "nationality"],
+  origin = "country.name",
+  destination = "continent")
+
+### Manually setting continents for "failed" countries
+### All failed maps are from european countries
+
+players = players |>
+  mutate(nationality.continent = replace_na(nationality.continent, "Europe"))
+
+### Regions
+middle_east <- c("Lebanon", "Iran", "Kuwait", "Saudi Arabia", "Egypt",
+                 "Tunisia", "Bahrain", "Iraq", "Oman", "Yemen", "Israel", "Libya",
+                 "Syria", "Jordan", "Qatar", "Morocco", "United Arab Emirates")
+
+south_america <- c(
+    "Argentina", "Bolivia", "Brazil", "Chile", "Colombia", "Ecuador",
+    "Guyana", "Paraguay", "Peru", "Suriname", "Uruguay", "Venezuela"
+)
+
+players <- players |> 
+  mutate(nationality.region = nationality.continent) |> 
+  mutate(
+    nationality.region = case_when(
+      nationality %in% south_america ~ "South America",
+      nationality.continent == "Americas" ~ "North/Central America",
+      TRUE ~ nationality.continent
+    )
+  )
+```
+
+
+
+### Concentration of foreign players for regions
+
+The following heatmap presents the percentage of players of each region in the leagues. The regions are the continents with the Americas splited into *South* and *North/Central*.  
+To select only the foreign players, the players from the country the league is from were excluded, for example, players from **Italy** who play in **Serie A** were excluded from this analysis.
+
+```{r plot_league_x_nationality_region, echo=FALSE, warning=FALSE, message=FALSE, fig.align = "center"}
+foreign_players <- players |> 
+  filter(!(nationality=="England" & league=="ENG-Premier League")) |> 
+  filter(!(nationality=="Spain" & league=="ESP-La Liga")) |> 
+  filter(!(nationality=="Italy" & league=="ITA-Serie A")) |> 
+  filter(!(nationality=="Germany" & league=="GER-Bundesliga")) |> 
+  filter(!(nationality=="France" & league=="FRA-Ligue 1")) |> 
+  filter(!(nationality=="Saudi Arabia" & league=="SAU-Pro League")) |> 
+  filter(!(nationality=="Türkiye" & league=="TUR-Süper Lig")) |> 
+  filter(!(nationality=="United States" & league=="USA-Major League Soccer")) |> 
+  filter(!(nationality=="Netherlands" & league=="NED-Eredivisie")) |> 
+  filter(!(nationality=="Portugal" & league=="POR-Primeira Liga"))
+
+foreign_players_conc <- foreign_players |>
+  group_by(league, nationality.region) |>
+  summarise(n=n()) |>
+  ungroup() |>
+  group_by(league) |> 
+  mutate(t=sum(n)) |> 
+  mutate(concentration = n/t) |> 
+  ungroup() |> 
+  select(league, nationality.region, concentration)
+
+foreign_players_conc$league <- factor(foreign_players_conc$league, levels=league_names)
+continents_factor <- c("Europe", "South America", "North/Central America", "Africa", "Asia", "Oceania")
+foreign_players_conc$nationality.region <- factor(foreign_players_conc$nationality.region, levels=continents_factor)
+
+foreign_players_conc |> 
+  ggplot(aes(x=nationality.region, y=league, fill=concentration)) +
+  geom_tile(color = "black") +
+  scale_fill_gradient2(
+    low = "white",
+    high = "red",
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle=30, hjust = 1)
+  ) +
+  labs(
+    title =NULL,
+    x = "Region",
+    y = "League"
+  ) +
+  geom_text(aes(label = paste(round(concentration, 3) * 100, " %")), color = "black", size = 3)
+```
+
+
+
+```{r print_nationality_table, echo=FALSE, warning=FALSE, message=FALSE, fig.align = "center", out.width="80%"}
+foreign_players_countries <- foreign_players |>
+  group_by(league, nationality) |> 
+  summarise(n = n(), nationality.region = first(nationality.region)) |> 
+  ungroup() |> 
+  group_by(league) |> 
+  mutate(t=sum(n)) |> 
+  mutate(country.concentration = n/t) |> 
+  ungroup() |> 
+  select(league, nationality, country.concentration, nationality.region)
+
+foreign_players_countries$league <- factor(foreign_players_countries$league, levels=league_names)
+foreign_players_countries$nationality.region <- factor(foreign_players_countries$nationality.region, levels=continents_factor)
+
+foreign_players_countries <- foreign_players_countries |> 
+  arrange(league, nationality.region, desc(country.concentration), nationality)
+
+foreign_players_countries_text <- foreign_players_countries |> 
+  arrange(league, nationality.region, desc(country.concentration), nationality) |> 
+  group_by(league, nationality.region) |> 
+  slice_head(n = 3) |> 
+  mutate(Text = paste0(nationality, " (",round(country.concentration, 4)*100, "%)")) |> 
+  summarise(Text = paste(Text, collapse = "<br>"), .groups = "drop") |> 
+  pivot_wider(names_from = nationality.region, values_from = Text)
+  
+
+foreign_players_countries_text |> 
+  mutate(
+    Africa = lapply(Africa, gt::html),
+    Asia = lapply(Asia, gt::html),
+    Europe = lapply(Europe, gt::html),
+    `North/Central America` = lapply(`North/Central America`, gt::html),
+    Oceania = lapply(Oceania, gt::html),
+    `South America` = lapply(`South America`, gt::html),
+  ) |> 
+  gt() |> 
+  tab_header(
+    title = "Players by league and region",
+    subtitle = "Top 3 nationalities for each region"
+  ) |> 
+  cols_label(
+    league = "Liga"
+  ) |> 
+  tab_style(
+    style = list(
+      cell_fill(color = "#F5F5F5")
+    ),
+    locations = cells_body(
+      rows = c(2, 4, 6, 8, 10)
+    )
+  ) |> 
+  tab_options(
+    table.font.size = 10,
+    data_row.padding = px(5)
+  )
+```
+
+
+### Number of players for each country in each league {.tabset}
+
+In this sections, the foreign players of each country is presented on a bar chart for each league. It may be used to illustrate the table above. In the following charts, countries with less than 5 players in a league are not displayed, so it may differ slightly from the table above.
+
+```{r plot_countries_function, echo=FALSE, message=FALSE, warning=FALSE}
+players_countries <- foreign_players |> 
+  group_by(league, nationality) |> 
+  summarise(n_players = n(), nationality.region = first(nationality.region)) |> 
+  filter(n_players >= 5) |> 
+  ungroup()
+
+players_countries$league <- factor(players_countries$league, levels=league_names)
+
+players_countries <- players_countries |> 
+  arrange(league, desc(n_players))
+
+plot_countries_by_league <- function(players_countries, league_name, top=-1){
+  
+  if(top>0){
+    players_countries <- players_countries |> 
+      slice_head(n=top)
+  }
+  
+  players_countries <- players_countries |> 
+    mutate(league=as.character(league)) |> 
+    filter(league==league_name)
+  
+  figure <- players_countries |> 
+    ggplot(aes(x=reorder(nationality, -n_players), y=n_players, fill=nationality.region)) +
+    geom_bar(stat = "identity") +
+    scale_fill_manual(values = region_colors) +
+    labs(
+      x="Country",
+      y="# Players",
+      title=league_name,
+      fill="Region"
+    ) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle=90, hjust = 1, vjust=0)) +
+    geom_text(aes(x=nationality, y=n_players+1, label=n_players), color="black", size=3)
+  
+  return(figure)
+}
+```
+
+#### ENG-Premier League
+
+```{r plot_countries_eng, echo=FALSE, message=FALSE, warning=FALSE, fig.width=8, fig.height=6, fig.align="center"}
+plot_countries_by_league(
+  players_countries=players_countries,
+  league_name="ENG-Premier League")
+```
+
+#### ESP-La Liga
+
+```{r plot_countries_esp, echo=FALSE, message=FALSE, warning=FALSE, fig.width=8, fig.height=6, fig.align="center"}
+plot_countries_by_league(
+  players_countries=players_countries,
+  league_name="ESP-La Liga")
+```
+
+#### ITA-Serie A
+
+```{r plot_countries_ita, echo=FALSE, message=FALSE, warning=FALSE, fig.width=8, fig.height=6, fig.align="center"}
+plot_countries_by_league(
+  players_countries=players_countries,
+  league_name="ITA-Serie A")
+```
+
+#### GER-Bundesliga
+
+```{r plot_countries_ger, echo=FALSE, message=FALSE, warning=FALSE, fig.width=8, fig.height=6, fig.align="center"}
+plot_countries_by_league(
+  players_countries=players_countries,
+  league_name="GER-Bundesliga")
+```
+
+#### FRA-Ligue 1
+
+```{r plot_countries_fra, echo=FALSE, message=FALSE, warning=FALSE, fig.width=8, fig.height=6, fig.align="center"}
+plot_countries_by_league(
+  players_countries=players_countries,
+  league_name="FRA-Ligue 1")
+```
+
+#### USA-Major League Soccer
+
+```{r plot_countries_usa, echo=FALSE, message=FALSE, warning=FALSE, fig.width=8, fig.height=6, fig.align="center"}
+plot_countries_by_league(
+  players_countries=players_countries,
+  league_name="USA-Major League Soccer")
+```
+
+#### POR-Primeira Liga
+
+```{r plot_countries_por, echo=FALSE, message=FALSE, warning=FALSE, fig.width=8, fig.height=6, fig.align="center"}
+plot_countries_by_league(
+  players_countries=players_countries,
+  league_name="POR-Primeira Liga")
+```
+
+#### SAU-Pro League
+
+```{r plot_countries_sau, echo=FALSE, message=FALSE, warning=FALSE, fig.width=8, fig.height=6, fig.align="center"}
+plot_countries_by_league(
+  players_countries=players_countries,
+  league_name="SAU-Pro League")
+```
+
+#### NED-Eredivisie
+
+```{r plot_countries_ned, echo=FALSE, message=FALSE, warning=FALSE, fig.width=8, fig.height=6, fig.align="center"}
+plot_countries_by_league(
+  players_countries=players_countries,
+  league_name="NED-Eredivisie")
+```
+
+#### TUR-Süper Lig
+
+```{r plot_countries_tur, echo=FALSE, message=FALSE, warning=FALSE, fig.width=8, fig.height=6, fig.align="center"}
+plot_countries_by_league(
+  players_countries=players_countries,
+  league_name="TUR-Süper Lig")
+```
+
+### {-}
+
+- Leagues in Portugal and France have more players from other regions (South America and Africa) than from Europe (their region);
+- The Portuguese league has a large number of Brazilian players, which explains the large proportion of South American players. In addition, the three African countries with the most representatives in the league (Angola, Cape Verde and Guinea-Bissau) are Portuguese-speaking countries, and like Brazil, they have had Portuguese participation in their history;
+- Germany has the most players from its own region;
+- Saudi Arabia has a similar number of players from 3 different continents (Europe, Americas and Africa);
+- MLS has the most players, proportionally, from North/Central America. However, it is possible to see a large number of Canadian players. This behavior is expected since there are Canadian teams that play in the league, such as CF Montréal and Toronto, and these players are considered foreigners, given that the league is mostly from the United States;  
+- Just like in the Portuguese league, the French and Dutch leagues are notable for the presence of players from countries that speak the local language. For example, in the Dutch league, two of the three most represented nationalities among foreigners from the Americas are from Suriname and Curacao, Dutch-speaking countries. In the French league, the same can be seen mainly in African players, with the presence of players from Côte d'Ivoire, Senegal, Cameroon and Guinea (45% of African countries that have more than 5 players in Ligue 1).
+
+
+## Players' wages and values for different leagues {.tabset}
+
+The following plots aims to show the payers' wages and values distribution for each league.  
+**Attention** this values are according to the SOFIFA api, which is based on the Fifa game (EA FC), then, the values may not reflect the real value/wage of some players. For more accurate values, consult transfermarkt.
+
+### Wages
+
+```{r plot_wage, echo=FALSE, warning=FALSE, fig.align = "center", fig.height=6, fig.width=8}
+plot_leagues_wage_no_out <- players |> 
+  ggplot(aes(x=reorder(league, wage, na.rm=TRUE), y=wage, fill=league)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_y_continuous(
+    limits = quantile(players$wage, c(0.05, 0.9), na.rm=TRUE),
+    labels = scales::label_number(scale_cut = cut_short_scale())
+  ) +
+  scale_fill_manual(values = leagues_colors) +
+  coord_flip() +
+  theme(legend.position="none") +
+  labs(
+    title="",
+    x="League",
+    y="Wage (€)"
+  )
+plot_leagues_wage_no_out
+```
+
+### Players' values
+```{r plot_value, echo=FALSE, warning=FALSE, fig.align = "center", fig.height=6, fig.width=8}
+plot_leagues_value_no_out <- players |> 
+  ggplot(aes(x=reorder(league, net_worth, na.rm=TRUE), y=net_worth, fill=league)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_y_continuous(
+    limits = quantile(players$net_worth, c(0.05, 0.9), na.rm=TRUE),
+    labels = scales::label_number(scale_cut = cut_short_scale())
+  ) +
+  scale_fill_manual(values = leagues_colors) +
+  coord_flip() +
+  theme(legend.position="none") +
+  labs(
+    title="",
+    x="League",
+    y="Players' value (€)"
+  )
+plot_leagues_value_no_out
+```
+

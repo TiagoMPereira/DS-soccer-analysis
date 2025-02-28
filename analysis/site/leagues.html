@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Tiago" />
+
+<meta name="date" content="2025-01-05" />
+
+<title>Leagues</title>
+
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Soccer Analysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="leagues.html">Leagues</a>
+</li>
+<li>
+  <a href="foot.html">Preferred Foot</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Leagues</h1>
+<h4 class="author">Tiago</h4>
+<h4 class="date">2025-01-05</h4>
+
+</div>
+
+
+<div id="players-and-teams-distribution" class="section level2">
+<h2>Players and teams distribution</h2>
+<p>This section will present a quick overview about the number of
+players and teams for each league. There are 3 bar plots showing,
+respectively, the number of players/teams for each league and the
+average number of players per team for each league.</p>
+<div id="players-and-teams-informations-for-leagues"
+class="section level3">
+<h3>Players and teams informations for leagues</h3>
+<p><img src="leagues_files/figure-html/plot_teams_per_league-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><strong>USA - Major League Soccer</strong> has more players than any
+other league, but it is explained once this league has more teams.</p>
+</div>
+</div>
+<div id="players-age" class="section level2">
+<h2>Players’ age</h2>
+<div id="players-current-age" class="section level3">
+<h3>Players’ current age</h3>
+<p><img src="leagues_files/figure-html/plot_players_age-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>According to the ages’ distribution some leagues appear to be
+similar, such as <strong>Primeira Liga (Portugal)</strong> and
+<strong>Eredivisie (Netherlands)</strong> and <strong>Premier League
+(England)</strong> and <strong>Bundesliga (Germany)</strong>. To
+evaluate if the players in those leagues present the same ages’
+distribution, the pairwise Kolmogorov-Smirnov test will be
+applied.<br />
+<em>1 - The ages’ distribution of no league is normal, according to
+KS-test</em><br />
+<em>2 - The ages’ distribution are statistically different, according to
+Kruskall Wallis test (p = 2.2e-16)</em></p>
+<center>
+<strong>p-value of paired KS-Test between the ages’ distribution per
+league</strong>
+</center>
+<p><img src="leagues_files/figure-html/plot_ages_comparison-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Considering <span class="math inline">\(\alpha = 0.05\)</span> it is
+possible to assert that <strong>Bundesliga</strong> and <strong>Premier
+League</strong> has players from the same age as well as <strong>Saudi
+Pro League</strong> and <strong>Super Lig (Turkey)</strong> and also
+<strong>Serie A (Italy)</strong> and <strong>USA MLS</strong>. The pairs
+with <span class="math inline">\(p-value &gt; 0.05\)</span> have
+statistically the same players’ ages distribution.</p>
+</div>
+</div>
+<div id="players-nationality" class="section level2">
+<h2>Player’s nationality</h2>
+<div id="concentration-of-foreign-players-for-regions"
+class="section level3">
+<h3>Concentration of foreign players for regions</h3>
+<p>The following heatmap presents the percentage of players of each
+region in the leagues. The regions are the continents with the Americas
+splited into <em>South</em> and <em>North/Central</em>.<br />
+To select only the foreign players, the players from the country the
+league is from were excluded, for example, players from
+<strong>Italy</strong> who play in <strong>Serie A</strong> were
+excluded from this analysis.</p>
+<p><img src="leagues_files/figure-html/plot_league_x_nationality_region-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div id="fqnmvdijyk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#fqnmvdijyk table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#fqnmvdijyk thead, #fqnmvdijyk tbody, #fqnmvdijyk tfoot, #fqnmvdijyk tr, #fqnmvdijyk td, #fqnmvdijyk th {
+  border-style: none;
+}
+
+#fqnmvdijyk p {
+  margin: 0;
+  padding: 0;
+}
+
+#fqnmvdijyk .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 10px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#fqnmvdijyk .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#fqnmvdijyk .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#fqnmvdijyk .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#fqnmvdijyk .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#fqnmvdijyk .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fqnmvdijyk .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#fqnmvdijyk .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#fqnmvdijyk .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#fqnmvdijyk .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#fqnmvdijyk .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#fqnmvdijyk .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#fqnmvdijyk .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#fqnmvdijyk .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#fqnmvdijyk .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#fqnmvdijyk .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#fqnmvdijyk .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#fqnmvdijyk .gt_row {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#fqnmvdijyk .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fqnmvdijyk .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#fqnmvdijyk .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#fqnmvdijyk .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#fqnmvdijyk .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fqnmvdijyk .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#fqnmvdijyk .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#fqnmvdijyk .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fqnmvdijyk .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fqnmvdijyk .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#fqnmvdijyk .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fqnmvdijyk .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#fqnmvdijyk .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fqnmvdijyk .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#fqnmvdijyk .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fqnmvdijyk .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#fqnmvdijyk .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fqnmvdijyk .gt_left {
+  text-align: left;
+}
+
+#fqnmvdijyk .gt_center {
+  text-align: center;
+}
+
+#fqnmvdijyk .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#fqnmvdijyk .gt_font_normal {
+  font-weight: normal;
+}
+
+#fqnmvdijyk .gt_font_bold {
+  font-weight: bold;
+}
+
+#fqnmvdijyk .gt_font_italic {
+  font-style: italic;
+}
+
+#fqnmvdijyk .gt_super {
+  font-size: 65%;
+}
+
+#fqnmvdijyk .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#fqnmvdijyk .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#fqnmvdijyk .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#fqnmvdijyk .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#fqnmvdijyk .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#fqnmvdijyk .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#fqnmvdijyk .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#fqnmvdijyk .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#fqnmvdijyk div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="7" class="gt_heading gt_title gt_font_normal" style>Players by league and region</td>
+    </tr>
+    <tr class="gt_heading">
+      <td colspan="7" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>Top 3 nationalities for each region</td>
+    </tr>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="league">Liga</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Europe">Europe</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="South-America">South America</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="North/Central-America">North/Central America</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Africa">Africa</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Asia">Asia</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Oceania">Oceania</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="league" class="gt_row gt_center">ENG-Premier League</td>
+<td headers="Europe" class="gt_row gt_center">France (6.04%)<br>Netherlands (5.77%)<br>Portugal (5.77%)</td>
+<td headers="South America" class="gt_row gt_center">Brazil (9.34%)<br>Argentina (3.02%)<br>Colombia (1.65%)</td>
+<td headers="North/Central America" class="gt_row gt_center">Jamaica (1.37%)<br>United States (1.37%)<br>Mexico (0.82%)</td>
+<td headers="Africa" class="gt_row gt_center">Ghana (2.47%)<br>Nigeria (2.2%)<br>Côte d'Ivoire (1.37%)</td>
+<td headers="Asia" class="gt_row gt_center">Japan (1.37%)<br>Türkiye (1.1%)<br>Korea Republic (0.82%)</td>
+<td headers="Oceania" class="gt_row gt_center">Australia (1.37%)<br>New Zealand (0.27%)</td></tr>
+    <tr><td headers="league" class="gt_row gt_center" style="background-color: #F5F5F5;">ESP-La Liga</td>
+<td headers="Europe" class="gt_row gt_center" style="background-color: #F5F5F5;">France (10%)<br>Portugal (4.55%)<br>Belgium (3.64%)</td>
+<td headers="South America" class="gt_row gt_center" style="background-color: #F5F5F5;">Argentina (11.36%)<br>Brazil (6.36%)<br>Uruguay (4.55%)</td>
+<td headers="North/Central America" class="gt_row gt_center" style="background-color: #F5F5F5;">Canada (0.91%)<br>Dominican Republic (0.91%)<br>United States (0.91%)</td>
+<td headers="Africa" class="gt_row gt_center" style="background-color: #F5F5F5;">Morocco (5%)<br>Senegal (3.18%)<br>Cameroon (1.82%)</td>
+<td headers="Asia" class="gt_row gt_center" style="background-color: #F5F5F5;">Türkiye (1.82%)<br>Japan (0.91%)<br>Georgia (0.45%)</td>
+<td headers="Oceania" class="gt_row gt_center" style="background-color: #F5F5F5;">NA</td></tr>
+    <tr><td headers="league" class="gt_row gt_center">ITA-Serie A</td>
+<td headers="Europe" class="gt_row gt_center">France (9.87%)<br>Spain (6.13%)<br>Belgium (3.73%)</td>
+<td headers="South America" class="gt_row gt_center">Argentina (6.67%)<br>Brazil (4.53%)<br>Colombia (1.87%)</td>
+<td headers="North/Central America" class="gt_row gt_center">United States (1.33%)<br>Canada (0.27%)<br>Mexico (0.27%)</td>
+<td headers="Africa" class="gt_row gt_center">Côte d'Ivoire (2.4%)<br>Morocco (1.87%)<br>Nigeria (1.87%)</td>
+<td headers="Asia" class="gt_row gt_center">Türkiye (1.07%)<br>Georgia (0.8%)<br>Armenia (0.27%)</td>
+<td headers="Oceania" class="gt_row gt_center">Australia (0.53%)<br>New Zealand (0.27%)</td></tr>
+    <tr><td headers="league" class="gt_row gt_center" style="background-color: #F5F5F5;">GER-Bundesliga</td>
+<td headers="Europe" class="gt_row gt_center" style="background-color: #F5F5F5;">France (11.96%)<br>Austria (9.78%)<br>Denmark (5.07%)</td>
+<td headers="South America" class="gt_row gt_center" style="background-color: #F5F5F5;">Brazil (3.26%)<br>Argentina (0.72%)<br>Ecuador (0.36%)</td>
+<td headers="North/Central America" class="gt_row gt_center" style="background-color: #F5F5F5;">United States (2.9%)<br>Canada (0.36%)<br>Costa Rica (0.36%)</td>
+<td headers="Africa" class="gt_row gt_center" style="background-color: #F5F5F5;">Guinea (1.45%)<br>Mali (1.45%)<br>Nigeria (1.45%)</td>
+<td headers="Asia" class="gt_row gt_center" style="background-color: #F5F5F5;">Japan (3.26%)<br>Türkiye (2.17%)<br>Korea Republic (1.45%)</td>
+<td headers="Oceania" class="gt_row gt_center" style="background-color: #F5F5F5;">Australia (1.45%)</td></tr>
+    <tr><td headers="league" class="gt_row gt_center">FRA-Ligue 1</td>
+<td headers="Europe" class="gt_row gt_center">Portugal (4.3%)<br>Netherlands (3.31%)<br>Switzerland (2.98%)</td>
+<td headers="South America" class="gt_row gt_center">Brazil (4.64%)<br>Argentina (1.66%)<br>Colombia (0.99%)</td>
+<td headers="North/Central America" class="gt_row gt_center">Canada (1.66%)<br>United States (1.66%)<br>Haiti (0.66%)</td>
+<td headers="Africa" class="gt_row gt_center">Côte d'Ivoire (8.94%)<br>Morocco (8.28%)<br>Senegal (6.29%)</td>
+<td headers="Asia" class="gt_row gt_center">Japan (1.32%)<br>Georgia (0.66%)<br>Jordan (0.33%)</td>
+<td headers="Oceania" class="gt_row gt_center">Australia (0.33%)<br>New Zealand (0.33%)</td></tr>
+    <tr><td headers="league" class="gt_row gt_center" style="background-color: #F5F5F5;">USA-Major League Soccer</td>
+<td headers="Europe" class="gt_row gt_center" style="background-color: #F5F5F5;">Germany (4.18%)<br>England (2.92%)<br>Spain (2.92%)</td>
+<td headers="South America" class="gt_row gt_center" style="background-color: #F5F5F5;">Argentina (7.31%)<br>Brazil (5.85%)<br>Colombia (5.85%)</td>
+<td headers="North/Central America" class="gt_row gt_center" style="background-color: #F5F5F5;">Canada (9.19%)<br>Mexico (2.3%)<br>Jamaica (1.67%)</td>
+<td headers="Africa" class="gt_row gt_center" style="background-color: #F5F5F5;">Ghana (3.55%)<br>Cameroon (1.25%)<br>Nigeria (1.25%)</td>
+<td headers="Asia" class="gt_row gt_center" style="background-color: #F5F5F5;">Japan (1.25%)<br>Israel (0.63%)<br>Georgia (0.21%)</td>
+<td headers="Oceania" class="gt_row gt_center" style="background-color: #F5F5F5;">Australia (1.04%)<br>New Zealand (0.63%)</td></tr>
+    <tr><td headers="league" class="gt_row gt_center">POR-Primeira Liga</td>
+<td headers="Europe" class="gt_row gt_center">Spain (13%)<br>France (4.67%)<br>Netherlands (2%)</td>
+<td headers="South America" class="gt_row gt_center">Brazil (31.67%)<br>Argentina (4%)<br>Uruguay (2.67%)</td>
+<td headers="North/Central America" class="gt_row gt_center">Costa Rica (1.33%)<br>Canada (0.33%)<br>Curacao (0.33%)</td>
+<td headers="Africa" class="gt_row gt_center">Angola (2.33%)<br>Cabo Verde (2.33%)<br>Guinea-Bissau (1.33%)</td>
+<td headers="Asia" class="gt_row gt_center">Türkiye (1.67%)<br>Japan (1%)<br>Cyprus (0.33%)</td>
+<td headers="Oceania" class="gt_row gt_center">NA</td></tr>
+    <tr><td headers="league" class="gt_row gt_center" style="background-color: #F5F5F5;">SAU-Pro League</td>
+<td headers="Europe" class="gt_row gt_center" style="background-color: #F5F5F5;">Portugal (5.88%)<br>Spain (5.88%)<br>France (4.71%)</td>
+<td headers="South America" class="gt_row gt_center" style="background-color: #F5F5F5;">Brazil (15.29%)<br>Uruguay (2.35%)<br>Argentina (1.76%)</td>
+<td headers="North/Central America" class="gt_row gt_center" style="background-color: #F5F5F5;">Jamaica (1.18%)<br>Canada (0.59%)<br>Curacao (0.59%)</td>
+<td headers="Africa" class="gt_row gt_center" style="background-color: #F5F5F5;">Morocco (7.06%)<br>Algeria (4.12%)<br>Cameroon (2.35%)</td>
+<td headers="Asia" class="gt_row gt_center" style="background-color: #F5F5F5;">Iraq (1.18%)<br>Armenia (0.59%)<br>Korea Republic (0.59%)</td>
+<td headers="Oceania" class="gt_row gt_center" style="background-color: #F5F5F5;">Australia (0.59%)</td></tr>
+    <tr><td headers="league" class="gt_row gt_center">NED-Eredivisie</td>
+<td headers="Europe" class="gt_row gt_center">Belgium (10.77%)<br>Denmark (5.77%)<br>France (5.38%)</td>
+<td headers="South America" class="gt_row gt_center">Suriname (3.08%)<br>Brazil (1.92%)<br>Argentina (1.54%)</td>
+<td headers="North/Central America" class="gt_row gt_center">United States (3.08%)<br>Curacao (2.69%)<br>Mexico (0.77%)</td>
+<td headers="Africa" class="gt_row gt_center">Morocco (4.62%)<br>Algeria (1.15%)<br>Ghana (1.15%)</td>
+<td headers="Asia" class="gt_row gt_center">Japan (2.31%)<br>Türkiye (1.92%)<br>Indonesia (1.54%)</td>
+<td headers="Oceania" class="gt_row gt_center">Australia (0.77%)<br>New Zealand (0.77%)</td></tr>
+    <tr><td headers="league" class="gt_row gt_center" style="background-color: #F5F5F5;">TUR-Süper Lig</td>
+<td headers="Europe" class="gt_row gt_center" style="background-color: #F5F5F5;">France (6.67%)<br>Portugal (6.67%)<br>Bosnia and Herzegovina (3.53%)</td>
+<td headers="South America" class="gt_row gt_center" style="background-color: #F5F5F5;">Brazil (7.84%)<br>Argentina (0.78%)<br>Uruguay (0.78%)</td>
+<td headers="North/Central America" class="gt_row gt_center" style="background-color: #F5F5F5;">Costa Rica (0.39%)<br>Haiti (0.39%)<br>Honduras (0.39%)</td>
+<td headers="Africa" class="gt_row gt_center" style="background-color: #F5F5F5;">Nigeria (5.1%)<br>Ghana (3.92%)<br>Senegal (3.53%)</td>
+<td headers="Asia" class="gt_row gt_center" style="background-color: #F5F5F5;">Iran (0.78%)<br>Kazakhstan (0.78%)<br>Uzbekistan (0.78%)</td>
+<td headers="Oceania" class="gt_row gt_center" style="background-color: #F5F5F5;">NA</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+<div id="number-of-players-for-each-country-in-each-league"
+class="section level3 tabset">
+<h3 class="tabset">Number of players for each country in each
+league</h3>
+<p>In this sections, the foreign players of each country is presented on
+a bar chart for each league. It may be used to illustrate the table
+above. In the following charts, countries with less than 5 players in a
+league are not displayed, so it may differ slightly from the table
+above.</p>
+<div id="eng-premier-league" class="section level4">
+<h4>ENG-Premier League</h4>
+<p><img src="leagues_files/figure-html/plot_countries_eng-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="esp-la-liga" class="section level4">
+<h4>ESP-La Liga</h4>
+<p><img src="leagues_files/figure-html/plot_countries_esp-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ita-serie-a" class="section level4">
+<h4>ITA-Serie A</h4>
+<p><img src="leagues_files/figure-html/plot_countries_ita-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ger-bundesliga" class="section level4">
+<h4>GER-Bundesliga</h4>
+<p><img src="leagues_files/figure-html/plot_countries_ger-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="fra-ligue-1" class="section level4">
+<h4>FRA-Ligue 1</h4>
+<p><img src="leagues_files/figure-html/plot_countries_fra-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="usa-major-league-soccer" class="section level4">
+<h4>USA-Major League Soccer</h4>
+<p><img src="leagues_files/figure-html/plot_countries_usa-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="por-primeira-liga" class="section level4">
+<h4>POR-Primeira Liga</h4>
+<p><img src="leagues_files/figure-html/plot_countries_por-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="sau-pro-league" class="section level4">
+<h4>SAU-Pro League</h4>
+<p><img src="leagues_files/figure-html/plot_countries_sau-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ned-eredivisie" class="section level4">
+<h4>NED-Eredivisie</h4>
+<p><img src="leagues_files/figure-html/plot_countries_ned-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="tur-süper-lig" class="section level4">
+<h4>TUR-Süper Lig</h4>
+<p><img src="leagues_files/figure-html/plot_countries_tur-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="section" class="section level3 unnumbered">
+<h3 class="unnumbered"></h3>
+<ul>
+<li>Leagues in Portugal and France have more players from other regions
+(South America and Africa) than from Europe (their region);</li>
+<li>The Portuguese league has a large number of Brazilian players, which
+explains the large proportion of South American players. In addition,
+the three African countries with the most representatives in the league
+(Angola, Cape Verde and Guinea-Bissau) are Portuguese-speaking
+countries, and like Brazil, they have had Portuguese participation in
+their history;</li>
+<li>Germany has the most players from its own region;</li>
+<li>Saudi Arabia has a similar number of players from 3 different
+continents (Europe, Americas and Africa);</li>
+<li>MLS has the most players, proportionally, from North/Central
+America. However, it is possible to see a large number of Canadian
+players. This behavior is expected since there are Canadian teams that
+play in the league, such as CF Montréal and Toronto, and these players
+are considered foreigners, given that the league is mostly from the
+United States;<br />
+</li>
+<li>Just like in the Portuguese league, the French and Dutch leagues are
+notable for the presence of players from countries that speak the local
+language. For example, in the Dutch league, two of the three most
+represented nationalities among foreigners from the Americas are from
+Suriname and Curacao, Dutch-speaking countries. In the French league,
+the same can be seen mainly in African players, with the presence of
+players from Côte d’Ivoire, Senegal, Cameroon and Guinea (45% of African
+countries that have more than 5 players in Ligue 1).</li>
+</ul>
+</div>
+</div>
+<div id="players-wages-and-values-for-different-leagues"
+class="section level2 tabset">
+<h2 class="tabset">Players’ wages and values for different leagues</h2>
+<p>The following plots aims to show the payers’ wages and values
+distribution for each league.<br />
+<strong>Attention</strong> this values are according to the SOFIFA api,
+which is based on the Fifa game (EA FC), then, the values may not
+reflect the real value/wage of some players. For more accurate values,
+consult transfermarkt.</p>
+<div id="wages" class="section level3">
+<h3>Wages</h3>
+<p><img src="leagues_files/figure-html/plot_wage-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="players-values" class="section level3">
+<h3>Players’ values</h3>
+<p><img src="leagues_files/figure-html/plot_value-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
