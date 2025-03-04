@@ -1,0 +1,191 @@
+---
+title: "Positions"
+author: "Tiago"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup_positions, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(cowplot)
+library(rlang)
+library(ggpubr)
+players <- read.csv("../data/processed/250015/players.csv")
+
+attributes <- c(
+  "height", "weight", "net_worth", "releaseclause", "overallrating",
+  "potential", "wage", "crossing", "finishing", "headingaccuracy",
+  "shortpassing", "volleys", "dribbling", "curve", "fk_accuracy", "longpassing",
+  "ballcontrol", "acceleration", "sprintspeed", "agility", "reactions",
+  "balance", "shotpower", "jumping", "stamina", "strength", "longshots",
+  "aggression", "interceptions", "vision", "penalties", "composure",
+  "defensiveawareness", "standingtackle", "slidingtackle", "gk_diving",
+  "gk_handling", "gk_kicking", "gk_positioning", "gk_reflexes",
+  "contract_duration", "age_hire", "age_end_contract", "current_age"
+)
+```
+
+
+```{r setup_dataframes, include=FALSE}
+field_dimensions <- data.frame(
+  x = c(0.25, 0.25, 0.75, 0.75, 0.25, 0.25, 0.75, 0.75, 0.65, 0.65, 0.35, 0.35, 0.25, 0.25, 0.35, 0.35, 0.65, 0.65),
+  y = c(0, 1.45, 1.45, 0, 0, 0.735, 0.735, 0, 0, 0.29, 0.29, 0, 0, 1.45, 1.45, 1.16, 1.16, 1.45)
+)
+
+rect1 <- data.frame (xmin=0.25, xmax=0.75, ymin=0, ymax=1.45)
+
+# Adding foot plots using draw_plot
+positions_coordinates <- data.frame(
+  GK = c(5, 1),
+  RB = c(7, 4),
+  CB = c(5, 4),
+  LB = c(3, 4),
+  CDM = c(5, 7),
+  RM = c(7, 10),
+  CM = c(5, 10),
+  LM = c(3, 10),
+  CAM = c(5, 13),
+  RW = c(7, 16),
+  LW = c(3, 16),
+  ST = c(5, 19)
+)
+rownames(positions_coordinates) <- c("x", "y")
+
+positions_coordinates <- data.frame(t(positions_coordinates))
+positions_coordinates$x <- positions_coordinates$x / 10
+positions_coordinates$y <- positions_coordinates$y / 15
+
+positions_coordinates$position_lineup <- rownames(positions_coordinates)
+
+players <- left_join(players, positions_coordinates, by="position_lineup")
+
+players_positions <- players |> select(c(c("position_lineup", "x", "y"), attributes))
+
+players_positions_gr <- players_positions |>
+  group_by(position_lineup) |> 
+  summarize(across(where(is.numeric), median, na.rm = TRUE))
+```
+
+```{r position_plot_function, include=FALSE}
+plot_positions <- function(players_positions_gr, attribute, field_dimensions, field_rect, title=""){
+  attribute_plot <- ggplot() +
+    geom_path(data=field_dimensions, aes(x = x, y = y), color = "#aaa", linewidth = 1) +
+    geom_rect(data=rect1, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="#04750d", alpha=0.1, inherit.aes = FALSE) +
+    geom_point(data=players_positions_gr, aes(x=x, y=y, size=!!sym(attribute), fill=!!sym(attribute)), shape = 21) +
+    scale_fill_gradient(low = "grey", high = "red") +
+    xlim(0.22, 0.77) +
+    ylim(0, 1.5) +
+    geom_label(data=players_positions_gr, aes(x=x, y=y, label = paste0("(",position_lineup,")")), vjust = 1.5, hjust=0.5, size = 2, color = "#000", label.size = 0, alpha=0.1) + 
+    geom_label(data=players_positions_gr, aes(x=x, y=y, label = round(!!sym(attribute), 1)), vjust = -0.5, hjust = 0.5, size = 3, color = "#000", label.size = 0, alpha=0.1) +
+    theme_void() +
+    theme(
+      axis.title.x=element_blank(),
+      axis.title.y=element_blank(),
+      line=element_blank(),
+      plot.title = element_text(hjust = 0.5),
+      panel.background = element_blank(),
+      plot.background = element_blank(),
+      legend.position = "none") +
+    ggtitle(title)
+  return(attribute_plot)
+}
+
+```
+
+## Attributes overview {.tabset}
+
+This section presents the numerical attributes of the players divided by position. For each position the attributes were aggregated by MEDIAN to prevent outliers from affecting the results. The attribute "height" is measured in centimeters (cm), the "weight" is measured in kilograms (kg), the financial attributes ("net_worth", "wage" and "releaseclause") are measured in euros (€) and the age attributes are measured in years. The remaining attributes are measured by a score ranging from 0 to 100.
+
+```{r plot_positions_analysis, results='asis', echo=FALSE, fig.align = "center", fig.width=8}
+
+for (attribute in attributes) {
+  cat("\n\n###", attribute, "{.tabset-panel}\n\n") 
+  attribute_plot <- plot_positions(players_positions_gr, attribute, field_dimensions, field_rect, attribute)
+  print(attribute_plot)
+}
+```
+
+While there are many attributes, the following sections will delve into specific attribute sets that will be discussed.
+
+## Physical attributes {.tabset}
+```{r plot_body_attributes, echo=FALSE, fig.align = "center", fig.width=8}
+p1 <- plot_positions(players_positions_gr, "height", field_dimensions, field_rect, "Height (cm)")
+p2 <- plot_positions(players_positions_gr, "weight", field_dimensions, field_rect, "Weight (kg)")
+p3 <- plot_positions(players_positions_gr, "strength", field_dimensions, field_rect, "Strength")
+
+ggarrange(p1, p2, p3, ncol = 3, nrow = 1)
+```
+
+- Goalkeepers (GK) have the highest heights and weights among the positions;
+- Strikers (ST) and defenders (CB) have similar body attributes, being among the largest, heaviest and strongest. In general, these are players in whom physicality is an important factor for ball tackles and offensive or defensive aerial plays;
+- Central Defensive Midfielders (CDM) are also similar to the positions mentioned above;
+- Attacking players, with the exception of Strikers (CAM, RW, LW), and midfielders (RM, LM) are smaller, lighter and less strong. This characteristic may be due to the need for agile players in these positions.
+
+## Finnancial attributes {.tabset}
+```{r plot_finnancial_attributes, echo=FALSE, fig.align = "center", fig.width=8}
+p1 <- plot_positions(players_positions_gr, "net_worth", field_dimensions, field_rect, "Net Worth (€)")
+p2 <- plot_positions(players_positions_gr, "wage", field_dimensions, field_rect, "Wage (€)")
+p3 <- plot_positions(players_positions_gr, "releaseclause", field_dimensions, field_rect, "Release Clause (€)")
+
+ggarrange(p1, p2, p3, ncol = 3, nrow = 1)
+```
+
+- In financial terms, there is not much variation between the positions, with the exception of goalkeepers (GK);
+- In all measures, goalkeepers (GK) have the lowest value, with a large difference from the other positions;
+- There is an inversion between the wing players (RW, LW), since the players on the left, despite being worth less, have a higher salary than the right wingers;
+- Again in relation to the wingers (RW, LW), these are the most valuable positions and have the highest release clause, but not the highest salary, which is that of the strikers (ST).
+
+## Deffensive attributes {.tabset}
+```{r plot_deffensive_attributes, echo=FALSE, fig.align = "center", fig.width=8}
+p1 <- plot_positions(players_positions_gr, "defensiveawareness", field_dimensions, field_rect, "Defensive Awareness")
+p2 <- plot_positions(players_positions_gr, "interceptions", field_dimensions, field_rect, "Interceptions")
+p3 <- plot_positions(players_positions_gr, "standingtackle", field_dimensions, field_rect, "Standing Tackle")
+
+ggarrange(p1, p2, p3, ncol = 3, nrow = 1)
+```
+
+- As expected, the closer to the defensive goal, the higher the defensive attributes among the outfield players;
+- Centerbacks (CB) and Center defensive midfielders (CDM) have the best defensive median, followed by defensive side players (RB, LB) and midfielders (CM).
+
+## Speed attributes {.tabset}
+```{r plot_speed_attributes, echo=FALSE, fig.align = "center", fig.width=8}
+p1 <- plot_positions(players_positions_gr, "acceleration", field_dimensions, field_rect, "Acceleration")
+p2 <- plot_positions(players_positions_gr, "sprintspeed", field_dimensions, field_rect, "Sprint Speed")
+p3 <- plot_positions(players_positions_gr, "agility", field_dimensions, field_rect, "Agility")
+
+ggarrange(p1, p2, p3, ncol = 3, nrow = 1)
+```
+
+- Speed, acceleration and agility are essential attributes, especially for wing players;
+- As expected, these players (RW, LW, RM, LM, RB, LB) have the highest scores;
+- With the exception of goalkeepers (GK), central defenders have the lowest scores in these attributes;
+- Speed attributes seem to contrast with physical attributes, as the smallest players are those who have the greatest agility, speed and acceleration.
+
+## Finishing attributes {.tabset}
+```{r plot_finishing_attributes, echo=FALSE, fig.align = "center", fig.width=8}
+p1 <- plot_positions(players_positions_gr, "finishing", field_dimensions, field_rect, "Finishing")
+p2 <- plot_positions(players_positions_gr, "shotpower", field_dimensions, field_rect, "Shot Power")
+p3 <- plot_positions(players_positions_gr, "longshots", field_dimensions, field_rect, "Long Shots")
+
+ggarrange(p1, p2, p3, ncol = 3, nrow = 1)
+```
+
+- As expected, the closer the attacking goal, the higher the finishing attributes;
+- Among the defensive players, the central defenders (CB) have scores significantly lower than the wing defenders (RB, LB). This can be explained by the fact that the players on the wings tend to support the attacking plays more and therefore need to develop these skills.
+
+## Crossing attributes {.tabset}
+```{r plot_crossing_attributes, echo=FALSE, fig.align = "center", fig.width=8}
+p1 <- plot_positions(players_positions_gr, "crossing", field_dimensions, field_rect, "Crossing")
+p2 <- plot_positions(players_positions_gr, "jumping", field_dimensions, field_rect, "Jumping")
+p3 <- plot_positions(players_positions_gr, "headingaccuracy", field_dimensions, field_rect, "Heading Accuracy")
+
+ggarrange(p1, p2, p3, ncol = 3, nrow = 1)
+```
+
+- The attributes related to crossing demonstrate a contrast between two parties, those who make the cross and those who finish the play;
+- Strikers (ST) and central defenders (CB) are better at jumping as well as heading accuracy;
+- On the other hand, the other positions are better at crossing than finishing;
+- The jumping attribute appears to be directly proportional to the height attribute.

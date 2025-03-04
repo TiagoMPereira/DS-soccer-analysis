@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Tiago" />
+
+<meta name="date" content="2025-03-04" />
+
+<title>Positions</title>
+
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Soccer Analysis</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="leagues.html">Leagues</a>
+</li>
+<li>
+  <a href="foot.html">Preferred Foot</a>
+</li>
+<li>
+  <a href="positions.html">Positions</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Positions</h1>
+<h4 class="author">Tiago</h4>
+<h4 class="date">2025-03-04</h4>
+
+</div>
+
+
+<div id="attributes-overview" class="section level2 tabset">
+<h2 class="tabset">Attributes overview</h2>
+<p>This section presents the numerical attributes of the players divided
+by position. For each position the attributes were aggregated by MEDIAN
+to prevent outliers from affecting the results. The attribute “height”
+is measured in centimeters (cm), the “weight” is measured in kilograms
+(kg), the financial attributes (“net_worth”, “wage” and “releaseclause”)
+are measured in euros (€) and the age attributes are measured in years.
+The remaining attributes are measured by a score ranging from 0 to
+100.</p>
+<div id="height" class="section level3 tabset-panel">
+<h3 class="tabset-panel">height</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="weight" class="section level3 tabset-panel">
+<h3 class="tabset-panel">weight</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-2.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="net_worth" class="section level3 tabset-panel">
+<h3 class="tabset-panel">net_worth</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-3.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="releaseclause" class="section level3 tabset-panel">
+<h3 class="tabset-panel">releaseclause</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-4.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="overallrating" class="section level3 tabset-panel">
+<h3 class="tabset-panel">overallrating</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-5.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="potential" class="section level3 tabset-panel">
+<h3 class="tabset-panel">potential</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-6.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="wage" class="section level3 tabset-panel">
+<h3 class="tabset-panel">wage</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-7.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="crossing" class="section level3 tabset-panel">
+<h3 class="tabset-panel">crossing</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-8.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="finishing" class="section level3 tabset-panel">
+<h3 class="tabset-panel">finishing</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-9.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="headingaccuracy" class="section level3 tabset-panel">
+<h3 class="tabset-panel">headingaccuracy</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-10.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="shortpassing" class="section level3 tabset-panel">
+<h3 class="tabset-panel">shortpassing</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-11.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="volleys" class="section level3 tabset-panel">
+<h3 class="tabset-panel">volleys</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-12.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dribbling" class="section level3 tabset-panel">
+<h3 class="tabset-panel">dribbling</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-13.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="curve" class="section level3 tabset-panel">
+<h3 class="tabset-panel">curve</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-14.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="fk_accuracy" class="section level3 tabset-panel">
+<h3 class="tabset-panel">fk_accuracy</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-15.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="longpassing" class="section level3 tabset-panel">
+<h3 class="tabset-panel">longpassing</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-16.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ballcontrol" class="section level3 tabset-panel">
+<h3 class="tabset-panel">ballcontrol</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-17.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="acceleration" class="section level3 tabset-panel">
+<h3 class="tabset-panel">acceleration</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-18.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="sprintspeed" class="section level3 tabset-panel">
+<h3 class="tabset-panel">sprintspeed</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-19.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="agility" class="section level3 tabset-panel">
+<h3 class="tabset-panel">agility</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-20.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="reactions" class="section level3 tabset-panel">
+<h3 class="tabset-panel">reactions</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-21.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="balance" class="section level3 tabset-panel">
+<h3 class="tabset-panel">balance</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-22.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="shotpower" class="section level3 tabset-panel">
+<h3 class="tabset-panel">shotpower</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-23.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="jumping" class="section level3 tabset-panel">
+<h3 class="tabset-panel">jumping</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-24.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="stamina" class="section level3 tabset-panel">
+<h3 class="tabset-panel">stamina</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-25.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="strength" class="section level3 tabset-panel">
+<h3 class="tabset-panel">strength</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-26.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="longshots" class="section level3 tabset-panel">
+<h3 class="tabset-panel">longshots</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-27.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="aggression" class="section level3 tabset-panel">
+<h3 class="tabset-panel">aggression</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-28.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="interceptions" class="section level3 tabset-panel">
+<h3 class="tabset-panel">interceptions</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-29.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="vision" class="section level3 tabset-panel">
+<h3 class="tabset-panel">vision</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-30.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="penalties" class="section level3 tabset-panel">
+<h3 class="tabset-panel">penalties</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-31.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="composure" class="section level3 tabset-panel">
+<h3 class="tabset-panel">composure</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-32.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="defensiveawareness" class="section level3 tabset-panel">
+<h3 class="tabset-panel">defensiveawareness</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-33.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="standingtackle" class="section level3 tabset-panel">
+<h3 class="tabset-panel">standingtackle</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-34.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="slidingtackle" class="section level3 tabset-panel">
+<h3 class="tabset-panel">slidingtackle</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-35.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gk_diving" class="section level3 tabset-panel">
+<h3 class="tabset-panel">gk_diving</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-36.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gk_handling" class="section level3 tabset-panel">
+<h3 class="tabset-panel">gk_handling</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-37.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gk_kicking" class="section level3 tabset-panel">
+<h3 class="tabset-panel">gk_kicking</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-38.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gk_positioning" class="section level3 tabset-panel">
+<h3 class="tabset-panel">gk_positioning</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-39.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gk_reflexes" class="section level3 tabset-panel">
+<h3 class="tabset-panel">gk_reflexes</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-40.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="contract_duration" class="section level3 tabset-panel">
+<h3 class="tabset-panel">contract_duration</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-41.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="age_hire" class="section level3 tabset-panel">
+<h3 class="tabset-panel">age_hire</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-42.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="age_end_contract" class="section level3 tabset-panel">
+<h3 class="tabset-panel">age_end_contract</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-43.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="current_age" class="section level3 tabset-panel">
+<h3 class="tabset-panel">current_age</h3>
+<p><img src="positions_files/figure-html/plot_positions_analysis-44.png" width="768" style="display: block; margin: auto;" /></p>
+<p>While there are many attributes, the following sections will delve
+into specific attribute sets that will be discussed.</p>
+</div>
+</div>
+<div id="physical-attributes" class="section level2 tabset">
+<h2 class="tabset">Physical attributes</h2>
+<p><img src="positions_files/figure-html/plot_body_attributes-1.png" width="768" style="display: block; margin: auto;" /></p>
+<ul>
+<li>Goalkeepers (GK) have the highest heights and weights among the
+positions;</li>
+<li>Strikers (ST) and defenders (CB) have similar body attributes, being
+among the largest, heaviest and strongest. In general, these are players
+in whom physicality is an important factor for ball tackles and
+offensive or defensive aerial plays;</li>
+<li>Central Defensive Midfielders (CDM) are also similar to the
+positions mentioned above;</li>
+<li>Attacking players, with the exception of Strikers (CAM, RW, LW), and
+midfielders (RM, LM) are smaller, lighter and less strong. This
+characteristic may be due to the need for agile players in these
+positions.</li>
+</ul>
+</div>
+<div id="finnancial-attributes" class="section level2 tabset">
+<h2 class="tabset">Finnancial attributes</h2>
+<p><img src="positions_files/figure-html/plot_finnancial_attributes-1.png" width="768" style="display: block; margin: auto;" /></p>
+<ul>
+<li>In financial terms, there is not much variation between the
+positions, with the exception of goalkeepers (GK);</li>
+<li>In all measures, goalkeepers (GK) have the lowest value, with a
+large difference from the other positions;</li>
+<li>There is an inversion between the wing players (RW, LW), since the
+players on the left, despite being worth less, have a higher salary than
+the right wingers;</li>
+<li>Again in relation to the wingers (RW, LW), these are the most
+valuable positions and have the highest release clause, but not the
+highest salary, which is that of the strikers (ST).</li>
+</ul>
+</div>
+<div id="deffensive-attributes" class="section level2 tabset">
+<h2 class="tabset">Deffensive attributes</h2>
+<p><img src="positions_files/figure-html/plot_deffensive_attributes-1.png" width="768" style="display: block; margin: auto;" /></p>
+<ul>
+<li>As expected, the closer to the defensive goal, the higher the
+defensive attributes among the outfield players;</li>
+<li>Centerbacks (CB) and Center defensive midfielders (CDM) have the
+best defensive median, followed by defensive side players (RB, LB) and
+midfielders (CM).</li>
+</ul>
+</div>
+<div id="speed-attributes" class="section level2 tabset">
+<h2 class="tabset">Speed attributes</h2>
+<p><img src="positions_files/figure-html/plot_speed_attributes-1.png" width="768" style="display: block; margin: auto;" /></p>
+<ul>
+<li>Speed, acceleration and agility are essential attributes, especially
+for wing players;</li>
+<li>As expected, these players (RW, LW, RM, LM, RB, LB) have the highest
+scores;</li>
+<li>With the exception of goalkeepers (GK), central defenders have the
+lowest scores in these attributes;</li>
+<li>Speed attributes seem to contrast with physical attributes, as the
+smallest players are those who have the greatest agility, speed and
+acceleration.</li>
+</ul>
+</div>
+<div id="finishing-attributes" class="section level2 tabset">
+<h2 class="tabset">Finishing attributes</h2>
+<p><img src="positions_files/figure-html/plot_finishing_attributes-1.png" width="768" style="display: block; margin: auto;" /></p>
+<ul>
+<li>As expected, the closer the attacking goal, the higher the finishing
+attributes;</li>
+<li>Among the defensive players, the central defenders (CB) have scores
+significantly lower than the wing defenders (RB, LB). This can be
+explained by the fact that the players on the wings tend to support the
+attacking plays more and therefore need to develop these skills.</li>
+</ul>
+</div>
+<div id="crossing-attributes" class="section level2 tabset">
+<h2 class="tabset">Crossing attributes</h2>
+<p><img src="positions_files/figure-html/plot_crossing_attributes-1.png" width="768" style="display: block; margin: auto;" /></p>
+<ul>
+<li>The attributes related to crossing demonstrate a contrast between
+two parties, those who make the cross and those who finish the
+play;</li>
+<li>Strikers (ST) and central defenders (CB) are better at jumping as
+well as heading accuracy;</li>
+<li>On the other hand, the other positions are better at crossing than
+finishing;</li>
+<li>The jumping attribute appears to be directly proportional to the
+height attribute.</li>
+</ul>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,5 +1,5 @@
 ---
-title: "Foot"
+title: "Preferred Foot"
 author: "Tiago"
 date: "2025-01-05"
 output: html_document

@@ -6,4 +6,6 @@ navbar:
       href: leagues.html
     - text: "Preferred Foot"
       href: foot.html
+    - text: "Positions"
+      href: positions.html
 output_dir: "site"

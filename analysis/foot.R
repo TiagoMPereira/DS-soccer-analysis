@@ -79,7 +79,7 @@ for (i in 1:length(positions)){
 names(plots) <- positions
 
 
-campo_futebol <- data.frame(
+field_dimensions <- data.frame(
   x = c(0.25, 0.25, 0.75, 0.75, 0.25, 0.25, 0.75, 0.75, 0.65, 0.65, 0.35, 0.35, 0.25, 0.25, 0.35, 0.35, 0.65, 0.65),
   y = c(0, 1.45, 1.45, 0, 0, 0.735, 0.735, 0, 0, 0.29, 0.29, 0, 0, 1.45, 1.45, 1.16, 1.16, 1.45)
 )
@@ -88,7 +88,7 @@ rect1 <- data.frame (xmin=0.25, xmax=0.75, ymin=0, ymax=1.45)
 
 # Creating the base soccer field
 base_plot <- ggplot() + 
-  geom_path(data = campo_futebol, aes(x = x, y = y), color = "#aaa", linewidth = 1) +
+  geom_path(data = field_dimensions, aes(x = x, y = y), color = "#aaa", linewidth = 1) +
   xlim(0, 1.5) +
   ylim(0, 1.5) +
   geom_rect(data=rect1, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill="#04750d", alpha=0.1, inherit.aes = FALSE) +
