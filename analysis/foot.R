@@ -5,6 +5,9 @@ library(ggplot2)
 library(ggimage)
 library(magick)
 library(cowplot)
+library(tidyr)
+library(reshape2)
+library(ggpubr)
 
 setwd("./analysis")
 players <- read.csv("../data/processed/250015/players.csv")
@@ -134,3 +137,76 @@ final_plot <- final_plot +
 
 
 print(final_plot)
+
+## Analysis of preferred foot based on players on the side of the field
+side_players <- players |> 
+  mutate(
+    tackle = rowMeans(select(players, c(standingtackle, slidingtackle)))
+  ) |> 
+  filter(position_lineup %in% c("RB", "LB", "RM", "LM", "RW", "LW")) |> 
+  mutate(
+    foot_group = case_when(
+      position_lineup %in% c("RB", "RM", "RW") & preferredfoot == "Right" ~ "Natural foot",
+      position_lineup %in% c("LB", "LM", "LW") & preferredfoot == "Left" ~ "Natural foot",
+      TRUE ~ "Switched foot"
+    )
+  ) |> 
+  select(c("position_lineup", "crossing", "finishing", "tackle", "foot_group"))
+
+descriptive_side_players <- side_players |> 
+  group_by(position_lineup, foot_group) |> 
+  summarise(
+    absolute = n()
+  ) |> 
+  arrange(position_lineup, foot_group) |> 
+  pivot_wider(
+    names_from=foot_group,
+    values_from = absolute
+  ) |>
+  mutate(
+    total_position = sum(`Natural foot`, `Switched foot`),
+    `Natural foot (%)` = `Natural foot` / total_position * 100,
+    `Switched foot (%)` = `Switched foot` / total_position * 100
+  ) |> 
+  select(-c("total_position"))
+
+names(descriptive_side_players)[names(descriptive_side_players) == 'position_lineup'] <- 'Position'
+
+descriptive_side_players
+
+##  attributes
+side_players_attr <- side_players |>
+  group_by(position_lineup, foot_group) |> 
+  summarise(across(where(is.numeric), median, na.rm = TRUE)) |> 
+  melt(id=c("position_lineup", "foot_group"))
+
+plot_foot_stats <- function(players_data, variable_name, title){
+  
+  data_aux <- players_data |> filter(variable==variable_name)
+  
+  fig <- ggplot(data_aux, aes(foot_group, position_lineup, fill= value)) + 
+    geom_tile(color = "white", lwd=1, linetype=1) +
+    scale_fill_gradient2(
+      low = "white",
+      mid = "white",
+      high = "red"
+    ) +
+    theme_minimal() +
+    theme(legend.position="none", plot.title = element_text(hjust = 0.5)) +
+    labs(
+      title=title,
+      x = NULL,
+      y = NULL
+    ) +
+    geom_text(aes(label = round(value, 3)), color = "black", size = 4)
+  
+  return(fig)
+  
+}
+
+tackle_stats <- plot_foot_stats(side_players_attr, "tackle", "Tackle")
+crossing_stats <- plot_foot_stats(side_players_attr, "crossing", "Crossing")
+finishing_stats <- plot_foot_stats(side_players_attr, "finishing", "Finishing")
+
+foot_stats_side <- ggarrange(tackle_stats, crossing_stats, finishing_stats, ncol = 3, nrow = 1)
+annotate_figure(foot_stats_side, top = text_grob("Median score of side players grouped by preferred foot"))

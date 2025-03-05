@@ -12,6 +12,10 @@ library(ggplot2)
 library(ggimage)
 library(magick)
 library(cowplot)
+library(reshape2)
+library(ggpubr)
+library(gt)
+library(tidyr)
 
 players <- read.csv("../data/processed/250015/players.csv")
 players$position_lineup <- factor(as.character(players$position_lineup),
@@ -187,3 +191,112 @@ It is notable that most players are right-footed, hence the high prevalence of r
 For defensive situations, the hypothesis raised is that the defensive wingers actually defend the wings of the field using their predominant foot to tackle attackers who seek deep plays. In offensive actions, the suspicion is that the defense players use deep plays as an attacking action and seek the cross, while for the midfielders and wingers the suspicion is that they use their dominant foot for finishing, taking the ball to the inside of the field.
 The proposed surveys are nothing more than suggestions and there is NO evidence to prove such behaviors.
 
+## Analysis of preferred foot based on players on the side of the field
+
+This session will analyze the defensive attribute "tackle" (average of sliding tackle" and "standing tackle") and attacking attributes "crossing" and "finishing". Only players on the side of the field will be analyzed, namely right/left back (**RB**, **LB**), right/left midfielders (**RM**, **LM**) and right/left wingers (**RW**, **LW**). Players will also be separated into subgroups according to their position and dominant foot, as explained below:  
+- **Natural foot**: players with "natural foot" are those whose dominant foot is the one that reflects their side of the field. Left-footed players who play on the left side and right-footed players who play on the right side will be considered "natural foot" players;  
+- **Switched foot**: players with "switched foot" are those whose dominant foot is the opposite of their side of play. Left-footed players who play on the right side and right-footed players who play on the left side will be considered "switched foot" players.
+
+```{r description_side_players, include=FALSE}
+side_players <- players |> 
+  mutate(
+    tackle = rowMeans(select(players, c(standingtackle, slidingtackle)))
+  ) |> 
+  filter(position_lineup %in% c("RB", "LB", "RM", "LM", "RW", "LW")) |> 
+  mutate(
+    foot_group = case_when(
+      position_lineup %in% c("RB", "RM", "RW") & preferredfoot == "Right" ~ "Natural foot",
+      position_lineup %in% c("LB", "LM", "LW") & preferredfoot == "Left" ~ "Natural foot",
+      TRUE ~ "Switched foot"
+    )
+  ) |> 
+  select(c("position_lineup", "crossing", "finishing", "tackle", "foot_group"))
+
+descriptive_side_players <- side_players |> 
+  group_by(position_lineup, foot_group) |> 
+  summarise(
+    absolute = n()
+  ) |> 
+  arrange(position_lineup, foot_group) |> 
+  pivot_wider(
+    names_from=foot_group,
+    values_from = absolute
+  ) |>
+  mutate(
+    total_position = sum(`Natural foot`, `Switched foot`),
+    `Natural foot (%)` = round(`Natural foot` / total_position * 100, 2),
+    `Switched foot (%)` = round(`Switched foot` / total_position * 100, 2)
+  ) |> 
+  select(-c("total_position"))
+
+names(descriptive_side_players)[names(descriptive_side_players) == 'position_lineup'] <- 'Position'
+```
+
+```{r print_side_players_desc, echo=FALSE, warning=FALSE, message=FALSE}
+descriptive_side_players |> 
+  ungroup() |> 
+  mutate(Position=as.character(Position)) |> 
+  gt() |> 
+  tab_header(
+    title = "Presence of natural/switched foot players in positions"
+  ) |> 
+  cols_label(
+    Position = "Position"
+  ) |> 
+  tab_style(
+    style = list(
+      cell_fill(color = "#F5F5F5")
+    ),
+    locations = cells_body(
+      rows = c(2, 4, 6)
+    )
+  ) |> 
+  tab_options(
+    table.font.size = 10,
+    data_row.padding = px(5)
+  )
+```
+
+```{r plot_foot_side_players, echo=FALSE, warning=FALSE, message=FALSE, fig.align = "center", fig.width=8}
+side_players_attr <- side_players |>
+  group_by(position_lineup, foot_group) |> 
+  summarise(across(where(is.numeric), median, na.rm = TRUE)) |> 
+  melt(id=c("position_lineup", "foot_group"))
+
+plot_foot_stats <- function(players_data, variable_name, title){
+  
+  data_aux <- players_data |> filter(variable==variable_name)
+  
+  fig <- ggplot(data_aux, aes(foot_group, position_lineup, fill= value)) + 
+    geom_tile(color = "white", lwd=1, linetype=1) +
+    scale_fill_gradient2(
+      low = "white",
+      mid = "white",
+      high = "red"
+    ) +
+    theme_minimal() +
+    theme(legend.position="none", plot.title = element_text(hjust = 0.5)) +
+    labs(
+      title=title,
+      x = NULL,
+      y = NULL
+    ) +
+    geom_text(aes(label = round(value, 3)), color = "black", size = 4)
+  
+  return(fig)
+  
+}
+
+tackle_stats <- plot_foot_stats(side_players_attr, "tackle", "Tackle")
+crossing_stats <- plot_foot_stats(side_players_attr, "crossing", "Crossing")
+finishing_stats <- plot_foot_stats(side_players_attr, "finishing", "Finishing")
+
+foot_stats_side <- ggarrange(tackle_stats, crossing_stats, finishing_stats, ncol = 3, nrow = 1)
+annotate_figure(foot_stats_side, top = text_grob("Median score of side players grouped by preferred foot"))
+```
+
+In the defensive attribute "tackle", as expected, defensive players have a better score. In addition, the behavior of left-footed left-midfielders stands out, as they perform better than right-footed players in this position.  
+
+Regarding "crossing", there are no major differences between **natural foot** and **switched foot** players, with only left-footed right-wingers showing a slightly greater positive difference in relation to left-footed players.  
+
+Regarding the "finishing" attribute, there are also no major differences between **natural foot** and **switched foot** players, however, for all positions analyzed, **switched foot** players have slightly better scores.  
