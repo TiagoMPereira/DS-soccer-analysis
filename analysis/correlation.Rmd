@@ -1,0 +1,203 @@
+---
+title: "Correlation"
+author: "Tiago"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup_correlations, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+library(ggcorrplot)
+library(ggplot2)
+library(dplyr)
+library(cowplot)
+library(GGally)
+library(rlang)
+library(reshape2)
+
+players <- read.csv("../data/processed/250015/players.csv")
+
+attributes <- c(
+  "overallrating", "height", "weight",
+  "crossing", "finishing", "headingaccuracy",
+  "shortpassing", "volleys", "dribbling", "curve", "fk_accuracy", "longpassing",
+  "ballcontrol", "acceleration", "sprintspeed", "agility", "reactions",
+  "balance", "shotpower", "jumping", "stamina", "strength", "longshots",
+  "aggression", "interceptions", "vision", "penalties", "composure",
+  "defensiveawareness", "standingtackle", "slidingtackle", "gk_diving",
+  "gk_handling", "gk_kicking", "gk_positioning", "gk_reflexes", "current_age"
+)
+
+attributes_data <- players |> 
+  mutate(reference_position = case_when(
+    position_lineup %in% c("CB", "LB", "RB", "CDM") ~ "defense",
+    position_lineup %in% c("LW", "RW", "CAM", "ST") ~ "attack",
+    position_lineup %in% c("CM", "LM", "RM") ~ "middle",
+    position_lineup %in% c("GK") ~ "goalkeeper"
+  )) |> 
+  select(c(c(attributes), c(reference_position)))
+```
+
+## Correlation
+
+This section will analyze the correlations between the attributes measured for each player. The attribute values are defined by the EAFC game developers and, with the exception of "height" and "width", vary between 0 and 100.
+
+The correlation is a value ranging from -1 to 1.  
+
+* Negative correlations indicate that the variables are inverse, that is, when one increases, the other tends to decrease, and vice versa.  
+* Positive values indicate that the correlation is positive, that is, if one variable increases, the other also increases.  
+* Values close to 0 indicate weak correlations. In this study, correlations between -0.65 and 0.65 will be considered weak.
+
+### Attributes correlation
+
+```{r function_plot_correlation, include=FALSE}
+# Analyzing overallrating based on positions
+plot_correlation <- function(data, reference_column, reference_value=NULL, title=NULL){
+  
+  if(!is.null(reference_column) & !is.null(reference_value)){
+    data <- data |> filter(!!sym(reference_column)==reference_value)
+  }
+
+  corr <- round(cor(data |> select(-c(reference_column, current_age)), use = "complete.obs"), 2)
+  
+  diag(corr) <- NA
+  corr[upper.tri(corr)] <- NA
+  
+  corr_melt <- corr |>
+    melt() |>
+    filter(!is.na(value)) |>
+    mutate(label=case_when(
+      abs(value) > 0.65 ~ value,
+      TRUE ~ NA
+    ))
+  
+  corr_plot <- ggplot(corr_melt, aes(Var1, Var2, fill=value)) + 
+    geom_tile(color = "white", lwd=1, linetype=1) +
+    scale_fill_gradient2(
+      low = "blue",
+      mid = "white",
+      high = "red"
+    ) +
+    theme_minimal() +
+    theme(
+      legend.position="none",
+      plot.title = element_text(hjust = 0.5),
+      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+      panel.grid.major = element_blank(), panel.grid.minor = element_blank()
+    ) +
+    labs(
+      title=title,
+      x = NULL,
+      y = NULL
+    ) +
+    geom_text(aes(label = label), color = "black", size = 3) +
+    scale_y_discrete(position = "right") 
+  
+  return(list(corr_melt, corr_plot))
+  
+}
+```
+
+#### All players
+```{r plot_general_correlation, echo=FALSE, message=FALSE, warning=FALSE, fig.width=12, fig.height=8, fig.align="center"}
+general_info <- plot_correlation(attributes_data, reference_column="reference_position", title="Correlation between players' attributes")
+general_corr <- general_info[[1]]
+general_plot <- general_info[[2]]
+
+print(general_plot)
+```
+
+When analyzing the correlation between the players' attributes in general, the goalkeepers' attributes stand out, as they present a negative correlation with most of the other attributes.  
+A high positive correlation is also noted between the attributes "sliding tackle", "standing tackle", "defensive awareness" and "interceptions". All of these attributes are characteristic of defensive players.  
+On the other hand, attributes such as "dribbling", "shortpassing", "longpassing" and "ball control" also present a strong positive correlation.  
+Analyzing all players, regardless of position, the attribute that appears to be most correlated with "overall rating" is "reactions", although the impact of attributes on "overall rating" will be analyzed in more depth in future sections.
+
+#### Goalkeepers
+```{r plot_gk_correlation, echo=FALSE, message=FALSE, warning=FALSE, fig.width=12, fig.height=8, fig.align="center"}
+gk_info <- plot_correlation(attributes_data, "reference_position", "goalkeeper", "Correlation between goalkeepers' attributes")
+gk_corr <- gk_info[[1]]
+gk_plot <- gk_info[[2]]
+
+print(gk_plot)
+```
+As shown in the overview, goalkeeper attributes demonstrate a strong positive correlation with each other, and when analyzing only the players in this position, a strong positive correlation can also be noted between these attributes and others such as "jumping", "shotpower" and "reactions". In relation to "overallrating", the variables "shotpower", "reactions" and "jumping" stand out in addition to the attributes specific to the position.
+
+#### Defensive players
+```{r plot_defense_correlation, echo=FALSE, message=FALSE, warning=FALSE, fig.width=12, fig.height=8, fig.align="center"}
+defense_info <- plot_correlation(attributes_data, "reference_position", "defense", "Correlation between defense players' attributes")
+defense_corr <- defense_info[[1]]
+defense_plot <- defense_info[[2]]
+
+print(defense_plot)
+```
+
+For defensive players, the attributes related to tackling and interception show a higher correlation, probably indicating that they are characteristic attributes of players in these positions. Furthermore, these same attributes positively affect the "overall rating", along with short and long passes and "reactions".
+
+#### Middle players
+```{r plot_middle_correlation, echo=FALSE, message=FALSE, warning=FALSE, fig.width=12, fig.height=8, fig.align="center"}
+middle_info <- plot_correlation(attributes_data, "reference_position", "middle", "Correlation between middle players' attributes")
+middle_corr <- middle_info[[1]]
+middle_plot <- middle_info[[2]]
+
+print(middle_plot)
+```
+
+The behavior of midfielders is similar to that of defenders, with a positive correlation between defensive attributes, but also highlights the influence of ball control on bribbling. The attributes of tackling and interception have a smaller impact on the overall rating when compared to defensive players, while the impact of ball control, dribbling, vision, finishing and crossing is greater.
+
+#### Attack players
+```{r plot_attack_correlation, echo=FALSE, message=FALSE, warning=FALSE, fig.width=12, fig.height=8, fig.align="center"}
+attack_info <- plot_correlation(attributes_data, "reference_position", "attack", "Correlation between attack players' attributes")
+attack_corr <- attack_info[[1]]
+attack_plot <- attack_info[[2]]
+
+print(attack_plot)
+```
+
+Finally, for attacking players there is a greater concentration of positive correlations between passing, finishing and ball control attributes. There is also a stronger positive correlation between jumping and strength than in the other positions, indicating that for attackers, the stronger they are, the better they are in aerial plays. In relation to the overall rating, the passing and finishing attributes have a greater impact than when related to midfielders, and shotpower also appears as a relevant factor.
+
+### Correlation between attributes and overall
+This section compiles the "overall" correlation with the other attributes for each position to clarify the positive impact of the attributes on the players' "score".
+```{r plot_overall_corr, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.align="center"}
+## Presenting only overall
+gk_overall <- gk_corr |> filter(Var2=="overallrating") |> mutate(position="goalkeeper")
+defense_overall <- defense_corr |> filter(Var2=="overallrating") |> mutate(position="defense")
+middle_overall <- middle_corr |> filter(Var2=="overallrating") |> mutate(position="middle")
+attack_overall <- attack_corr |> filter(Var2=="overallrating") |> mutate(position="attack")
+
+overall_corr <- rbind(gk_overall, defense_overall, middle_overall, attack_overall) |> 
+  select(-Var2) |> 
+  mutate(position = factor(position, levels=c("goalkeeper", "defense", "middle", "attack")))
+
+overall_plot <- ggplot(overall_corr, aes(Var1, position, fill=value)) + 
+  geom_tile(color = "white", lwd=1, linetype=1) +
+  scale_fill_gradient2(
+    low = "blue",
+    mid = "white",
+    high = "red"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(hjust = 0.5),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+    panel.grid.major = element_blank(), panel.grid.minor = element_blank()
+  ) +
+  labs(
+    title="Correlation between attributes and Overall Rating for players by position",
+    x = "Attributes",
+    y = "Position"
+  ) +
+  geom_text(aes(label = label), color = "black", size = 2.5) +
+  scale_y_discrete(position = "right") 
+print(overall_plot)
+
+```
+
+* Goalkeeper attributes affect the overall score of goalkeepers only;  
+* "reactions" is an attribute that positively affects the overall score of all positions;  
+* "jumping" affects the score of goalkeepers and defenders more;  
+* "aggression", "interceptions", "defensive awareness", "sliding tackle" and "standing tackle", which are defensive attributes, affect the score of defenders more;  
+* "crossing" affects midfielders more;  
+* Player condition represented by "stamina" affects attackers more;  
+* Finishing and dribbling attributes, and "vision" affect attackers and midfielders more.

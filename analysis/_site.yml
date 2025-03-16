@@ -8,4 +8,6 @@ navbar:
       href: foot.html
     - text: "Positions"
       href: positions.html
+    - text: "Correlation"
+      href: correlation.html
 output_dir: "site"
