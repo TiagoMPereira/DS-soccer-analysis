@@ -10,4 +10,8 @@ navbar:
       href: positions.html
     - text: "Correlation"
       href: correlation.html
+    - text: "PCA"
+      href: pca.html
 output_dir: "site"
+
+# rmarkdown::render_site()

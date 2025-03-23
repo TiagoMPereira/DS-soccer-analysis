@@ -1,0 +1,84 @@
+---
+title: "PCA"
+author: "Tiago"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup_pca, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(tidyr)
+library(FactoMineR)
+library(factoextra)
+library(plotly)
+
+players <- read.csv("../data/processed/250015/players.csv")
+
+attributes <- c(
+  "overallrating", "height", "weight",
+  "crossing", "finishing", "headingaccuracy",
+  "shortpassing", "volleys", "dribbling", "curve", "fk_accuracy", "longpassing",
+  "ballcontrol", "acceleration", "sprintspeed", "agility", "reactions",
+  "balance", "shotpower", "jumping", "stamina", "strength", "longshots",
+  "aggression", "interceptions", "vision", "penalties", "composure",
+  "defensiveawareness", "standingtackle", "slidingtackle", "gk_diving",
+  "gk_handling", "gk_kicking", "gk_positioning", "gk_reflexes"
+)
+
+attributes_data <- players |> 
+  mutate(reference_position = case_when(
+    position_lineup %in% c("CB", "LB", "RB", "CDM") ~ "defense",
+    position_lineup %in% c("LW", "RW", "CAM", "ST") ~ "attack",
+    position_lineup %in% c("CM", "LM", "RM") ~ "middle",
+    position_lineup %in% c("GK") ~ "goalkeeper"
+  )) |> 
+  select(c(c(attributes), c(reference_position, position_lineup)))
+```
+
+```{r calc_pca, echo=FALSE}
+# PCA
+pca <- PCA(attributes_data[,c(-37, -38)], graph = FALSE)
+
+components <- data.frame(pca$ind)
+components <- components[1:nrow(components), 1:3]
+components <- cbind(components, attributes_data$reference_position, attributes_data$position_lineup)
+names(components)[4] <- "reference_position"
+names(components)[5] <- "position_lineup"
+```
+
+# Principal Component Analysis (PCA)
+
+Principal Components Analysis (PCA) reduces the dimensionality of the dataset while maintaining the main information. It is important to condense the main information about the players into new features. The graph below demonstrates the 3 main components and colors the points according to the player's position, being separated into "goalkeepers", "defense", "midfield" and "attack".
+
+```{r plot_pca, echo=FALSE}
+fig <- plot_ly(
+  components,
+  x = ~coord.Dim.1, y = ~coord.Dim.2, z = ~coord.Dim.3,
+  color = ~reference_position,
+  colors = c("#00AFBB", "#E7B800", "#0C4", "#F7B"),
+  text = ~position_lineup,
+  hoverinfo = "text"
+) |>
+  add_markers(size = 12)
+
+
+fig <- fig |> 
+  layout(
+    title = "3 main components",
+    scene = list(
+      bgcolor = "#e5ecf6",
+      xaxis = list(showspikes=FALSE),
+      yaxis = list(showspikes=FALSE),
+      zaxis = list(showspikes=FALSE)
+    )
+  )
+
+fig
+```
+
+Analyzing the graph, it is easy to separate the behavior of the goalkeepers, due to the specific attributes already identified in previous sections. However, among the outfield players, there is an overlap between the midfield players and the others, and when these are removed from the visualization, it is also easy to differentiate between attacking and defensive players.
+
+This behavior is expected since the midfield players include defensive midfielders (defensive characteristics) and attacking midfielders (offensive characteristics). Furthermore, the analysis of the components shows that the differentiation of the sector in which the player plays can be easily made.
